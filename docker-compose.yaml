@@ -1,0 +1,12 @@
+version: '1.0'
+services:
+  oracle-password-manager:
+    build: .
+    image: sharuto/oracle-password-manager
+    container_name: oracle-password-manager
+
+    ports:
+      - "6969:6969"
+      - "6379:6379"
+    restart: unless-stopped
+
