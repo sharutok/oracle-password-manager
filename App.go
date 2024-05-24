@@ -49,20 +49,31 @@ func check(err error, s string) {
 }
 
 func setPasswordOracleAdor(res http.ResponseWriter, req *http.Request) {
-	redisIntance := db()
-	password := req.URL.Query().Get("password")
-	log.Println(password)
+	api_key := req.Header.Get("api_key")
+	if api_key == os.Getenv("API_KEY") {
 
-	err = redisIntance.Set(ctx, "oracle-ador-password", password, 0).Err()
-	check(err, "error in setting value")
-	log.Println("Value Updated")
+		redisIntance := db()
+		password := req.URL.Query().Get("password")
+		log.Println(password)
+
+		err = redisIntance.Set(ctx, "oracle-ador-password", password, 0).Err()
+		check(err, "error in setting value")
+		log.Println("Value Updated")
+	} else {
+		json.NewEncoder(res).Encode("error")
+	}
 
 }
 
 func getPasswordOracleAdor(res http.ResponseWriter, req *http.Request) {
-	redisIntance := db()
-	val, err := redisIntance.Get(ctx, "oracle-ador-password").Result()
-	check(err, "error in getting redis value")
-	log.Println(val)
-	json.NewEncoder(res).Encode(val)
+	api_key := req.Header.Get("api_key")
+	if api_key == os.Getenv("API_KEY") {
+		redisIntance := db()
+		val, err := redisIntance.Get(ctx, "oracle-ador-password").Result()
+		check(err, "error in getting redis value")
+		log.Println(val)
+		json.NewEncoder(res).Encode(val)
+	} else {
+		json.NewEncoder(res).Encode("error")
+	}
 }
